@@ -183,7 +183,18 @@ describe("Anthropic request fingerprint alignment", () => {
 			sessionId,
 		});
 
-		expect(headers.Accept).toBe("application/json");
+		expect(headers.Accept).toBe("text/event-stream");
+
+		const nonStreamingOptions = buildAnthropicClientOptions({
+			model: ANTHROPIC_MODEL,
+			apiKey: "sk-ant-oat-test",
+			isOAuth: true,
+			stream: false,
+			hasTools: true,
+			thinkingEnabled: true,
+			sessionId,
+		});
+		expect(nonStreamingOptions.defaultHeaders.Accept).toBe("application/json");
 		// Pinned literally (not via the imported constant) so a wrong version bump is caught
 		// on an observable wire header: this is the exact User-Agent the upstream expects.
 		expect(headers["User-Agent"]).toBe("claude-cli/2.1.257 (external, cli)");
@@ -1232,7 +1243,7 @@ describe("Anthropic request fingerprint alignment", () => {
 		expect(await promise).toEqual({
 			sessionHeader: sessionId,
 			url: "https://api.anthropic.com/v1/messages?beta=true",
-			accept: "application/json",
+			accept: "text/event-stream",
 		});
 	});
 
